@@ -1,37 +1,102 @@
   
-  BUFFER = [];
-  BUFFER_INDEX = BUFFER.length ;
+  
+  /*
+    egglang.js
+    
+    *Author: Gama Sibusiso Vincent
+    * The official backend for egglang
+  */
+
+//coordinates for the printing cursor 
   x = 0.02 ;
   y = 0.02;
    
    
+   
 function parseExpression(program) {
+  
+  //remove any spaces
   program = skipSpace(program);
   let match, expr;
-  if (match = /^"([^"]*)"/.exec(program)) {
+  
+  if (match = /^"([^"]*)"/.exec(program)) { // checks for strings values
     expr = {type: "value", value: match[1]};
-  } else if (match = /^\d+\b/.exec(program)) {
+  } else if (match = /^\d+\b/.exec(program)) { // checks for numbers
     expr = {type: "value", value: Number(match[0])};
-  } else if (match = /^[^\s(),#"]+/.exec(program)) {
+  } else if (match = /^[^\s(),#"]+/.exec(program)) { //checks for ids
     expr = {type: "word", name: match[0]};
   } else {
+  // error on unexpected match
     throw new SyntaxError("Unexpected syntax: " + program);
+        
   }
-
+   //parse the match and return it
   return parseApply(expr, program.slice(match[0].length));
 }
 
 function skipSpace(string) {
-  let first = string.search(/\S/);
-  if (first == -1) return "";
+  let first = string.search(/\S/); 
+  //skip all spaces and newline
+  //this is an overkill
+  // we lose control of line counting
+  // TO-DO: fix line counting 
+  
+  if (first == -1) return ""; //return an empty string if the input has no spaces
+  
   return string.slice(first);
 }
 
-function parseApply(expr, program) { program = skipSpace(program); if (program[0] != "(") { return {expr: expr, rest: program}; } program = skipSpace(program.slice(1)); expr = {type: "apply", operator: expr, args: []}; while (program[0] != ")") { let arg = parseExpression(program); expr.args.push(arg.expr); program = skipSpace(arg.rest); if (program[0] == ",") { program = skipSpace(program.slice(1)); } else if (program[0] != ")") { throw new SyntaxError("Expected ',' or ')'"); } } return parseApply(expr, program.slice(1)); }
+function parseApply(expr, program) { 
+       //skip spaces
+       program = skipSpace(program); 
+       
+       //if the fist token is not a scope, return it
+       if (program[0] != "(") {
+             return {expr: expr, rest: program}; 
+       }
+       
+       //else clean the scope
+     program = skipSpace(program.slice(1));
+     
+     expr = {type: "apply", operator: expr, args: []}; 
+    while (program[0] != ")") {
+             //loop until we get the closing paranteses
+             //we parse expression, since everything is one
+             let arg = parseExpression(program); 
+            expr.args.push(arg.expr);
+            
+            //clean the rest of the input
+             program = skipSpace(arg.rest); 
+             
+             if (program[0] == ",") { 
+                   //we still have more, clean it 
+                   program = skipSpace(program.slice(1)); 
+              } else if (program[0] != ")") { 
+              // if we have no more and missing a closing paran
+              // we report
+                   throw new SyntaxError("Expected ',' or ')'"); 
+                           
+                   
+              }
+      } 
+      //return a recursive call passing the last cleaned input
+      return parseApply(expr, program.slice(1));
+ 
+ }
 
-function parse(program) { let {expr, rest} = parseExpression(program); if (skipSpace(rest).length > 0) { throw new SyntaxError("Unexpected text after program"); } return expr; }
 
+function parse(program) { 
+    // a program is also an expressiob
+     let {expr, rest} = parseExpression(program);
+      if (skipSpace(rest).length > 0) { 
+      throw new SyntaxError("Unexpected text after program"); 
+      } 
+      return expr;
+  }
 
+//This object will help us implement 
+// language grammar parts or syntax 
+//e.g if statememts and loopz
 const specialForms = Object.create(null);
 
 function evaluate(expr, scope) {
@@ -61,13 +126,20 @@ function evaluate(expr, scope) {
 }
 
 
+//the if statement is nothing more than a funcrion
+//it can be returned and it is called with 3 args
+/*
+                          
+     if ( _arg1      ,      _args2 ,               _arg3 )
+             \_condition     \_ expr is true    \_ expr is false 
+*/
 specialForms.if = (args, scope) => {
   if (args.length != 3) {
     throw new SyntaxError("Wrong number of args to if");
-  } else if (evaluate(args[0], scope) !== false) {
-    return evaluate(args[1], scope);
+  } else if (evaluate(args[0], scope) !== false) { // condition
+    return evaluate(args[1], scope); // expr true
   } else {
-    return evaluate(args[2], scope);
+    return evaluate(args[2], scope); // expr false
   }
 };
 
@@ -93,8 +165,17 @@ specialForms.do = (args, scope) => {
   return value;
 };
 
+specialForms.read = (args, scope) => {
+   
+      if ( args.length >0 )
+        throw new TypeError("Wrong number of arguments");
+        
+      return prompt("stdin:");
 
-specialForms.define = (args, scope) => {
+}
+
+
+specialForms.var = (args, scope) => {
   if (args.length != 2 || args[0].type != "word") {
     throw new SyntaxError("Incorrect use of define");
   }
@@ -108,7 +189,7 @@ const topScope = Object.create(null);
 topScope.true = true;
 topScope.false = false;
 
-for (let op of ["+", "-", "*", "/", "==", "<", ">"]) {
+for (let op of ["+", "-", "*", ">>" , "<<" , "%" , "&", "|" ,"&&","||" , "!=" , "/", "==", "<", ">"]) {
   topScope[op] = Function("a, b", `return a ${op} b;`);
 }
 
@@ -116,18 +197,56 @@ topScope.print = value => {
   //  console.log(value);
 //  alert(value);
   //Debug("stdout: "+value);
-  BUFFER[BUFFER_INDEX++] = "stdout: "+value ;
+          txt.DrawText(value ,  x, y );
+	         y+= 0.02 ;
+  //BUFFER[BUFFER_INDEX++] = "stdout: "+value ;
  
   return value;
 };
 
 
 function run(program) {
+  if( program.length > 0 )
   return evaluate(parse(program), Object.create(topScope));
 }
 
 
-specialForms.fun = (args, scope) => {
+
+
+
+specialForms.throw = (args, scope) => {
+    if ( args.length < 1 || args.length > 1)
+        throw new TypeError("Wrong number of arguments");
+        
+    var val = evaluate( args[0] , scope);
+    //throw new TypeError(val)
+    throw val ;
+    return val;
+}
+
+specialForms.try = (args, scope) => {
+      if ( args.length < 2 )
+      {
+         throw new TypeError("Wrong number of arguments");
+      }
+     
+     try
+     {
+               value = evaluate(args[0], scope);
+               return value;
+     }catch(e)
+     {
+          value = evaluate(args[1], scope);
+          //alert( "Val "+value );
+          
+          if ( value != null)
+                  throw(value);
+          else throw (e)
+         return  value ;
+     }
+}
+
+specialForms.function = (args, scope) => {
   if (!args.length) {
     throw new SyntaxError("Functions need a body");
   }
