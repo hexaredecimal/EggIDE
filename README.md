@@ -44,6 +44,8 @@ I'll try and optimise it some other time.
       var(x print(5)),
       print(x)
    )
+   
+3. Functions
 ```
 	-- we can also declare our own functions
 	-- we use the function function...lol
@@ -61,14 +63,16 @@ I'll try and optimise it some other time.
 	)
 ```
 
-	-- as you can see we can also use the if function
+4. If statememts
+	-- as you can see abover, we can also use the if function
 	-- it takes 3 parameters 
 	-- the first is the condition
 	-- the second is the value if true 
 	-- or a list of statements inside a do function
 	-- the third is the value if false 
 	-- or also a list of statemts
-	
+
+
 ```
 	do(
 		var(n,30),
@@ -78,6 +82,7 @@ I'll try and optimise it some other time.
 		 )
 	)
 
+5. Loops
 ```
 
 	-- loops can be created only with the while function
@@ -96,7 +101,8 @@ I'll try and optimise it some other time.
 			)
 		)
 	)
-	
+
+6. Try (Exception handling)
 ```
 
 	-- we can catch and handle exceptions 
@@ -117,6 +123,8 @@ I'll try and optimise it some other time.
 			print("Syntax error $$$$")
 		)
 	)
+	
+8. Throw (Exception Handling)
 ```
 	-- we can also throw our own exceptions 
 	-- we use the throw function 
@@ -147,3 +155,38 @@ I'll try and optimise it some other time.
 
 	)
 ```
+
+9. Supported operators 
+
+	-- Mathematical operations are also possible
+	-- Here is a list of the supported mathematical operators:
+		-- * + -> addition 
+		-- * - -> subtraction 
+		-- * / -> division 
+		-- * * -> multiplication
+		-- * % -> modulus
+		
+	-- Logical operators are also supported 
+	-- Here is a list of supported logical operators:
+		-- * && -> logical and 
+		-- * || -> logical or 
+		-- * == -> logical equals to 
+		-- * != -> logical not equals to
+		-- * >  -> logical greater than
+		-- * <  -> logical less than
+		-- * >= -> logical greater or equals to
+		-- * <= -> logical less or equals to
+		
+	-- Bitwise operators are also possible
+	-- Here is a list of supported bitwise operators:
+		-- * &  -> bitwise and
+		-- * |  -> bitwise or
+		-- * ^  -> bitwise xor
+		-- * ~  -> bitwise not (buggy, still in working on it)
+	
+	-- Since the nature of the Egg programming language is functional programming 
+	-- all the operators are functuons
+	-- most of them take two values, left and right
+	-- most, except the bitwise not.
+	-- it only operates with one parameter
+
