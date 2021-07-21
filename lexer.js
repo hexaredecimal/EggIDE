@@ -10,47 +10,101 @@
   x = 0.02 ;
   y = 0.02;
   
+ 
    
 function parseExpression(program) {
   
   //remove any spaces
   program = skipSpace(program);
-  let match, expr;
+  let match = "" , expr, cmnt ;
+ 
   
-  if (match = /^"([^"]*)"/.exec(program)) { // checks for strings values
+  if (match = /^"([^"]*)"/.exec(program))
+   { // checks for strings values
     expr = {type: "value", value: match[1]};
-  } else if (match = /^\d+\b/.exec(program)) { // checks for numbers
+  } 
+  else if (
+   (match = /^\d+\b/.exec(program)) || (match = /-([0-9]*)/.exec(program))
+   )
+  { // checks for numbers
     expr = {type: "value", value: Number(match[0])};
-  } else if (match = /^[^\s(),#"]+/.exec(program)) { //checks for ids
+  } 
+  else if (match = /([a-zA-Z0-9_]+\::[a-zA-Z0-9_]*)/.exec(program))
+  {
+      expr = {type: "word", name: match[0]};
+    
+  }
+  else if (match = /^[^\s(),#"]+/.exec(program))
+   { //checks for ids
     expr = {type: "word", name: match[0]};
-  } else {
+  }
+  else {
   // error on unexpected match
-    throw new SyntaxError("Unexpected syntax: " + program);
+    
+        throw new SyntaxError("Unexpected syntax: " + program);
+    
         
   }
+  
+ 
    //parse the match and return it
   return parseApply(expr, program.slice(match[0].length));
 }
 
 function skipSpace(string) {
-  let first = string.search(/\S/); 
+
+if ( string != null )
+{
+        let m = new RegExp( '#[a-zA-Z0-9_]*\.egg'  ,  'm' );
+	           if( m = m.exec(string) )
+	          {
+	              m = m.toString();
+	              var include = m.replace("#" , "");
+	              for ( var i = 0; settings.ide_std_lib.length ; i++)
+	              {
+	                   if ( settings.ide_std_lib[i] == include ) {
+	                    //   alert("True"); 
+	                        //put the contents of the file
+	                       var txt = app.ReadFile(settings.ide_std_lib_path +include );
+	                       
+	                       string =   string.replace(m,txt);
+	                       //alert(string);
+	                       break;
+	                   }
+	 
+	               }
+	              
+	          }
+	
  
+   m = new RegExp( settings.ide_comment_literal , 'm' )
+	if ( m = m.exec( string ) )
+	string =  string.replace(m , "" );
+	
+  let first = string.search(/\S/);
+  
   //skip all spaces and newline
   //this is an overkill
   // we lose control of line counting
   // TO-DO: fix line counting 
   
   if (first == -1) return ""; //return an empty string if the input has no spaces
-  
+   
   return string.slice(first);
+ }
+ 
+ return string ;
 }
 
 function parseApply(expr, program) { 
+       //alert(expr.type + ":" + expr.name );
        //skip spaces
        program = skipSpace(program); 
        
        //if the fist token is not a scope, return it
+       //alert(program[0] );
        if (program[0] != "(") {
+           
              return {expr: expr, rest: program}; 
        }
        
@@ -62,6 +116,7 @@ function parseApply(expr, program) {
              //loop until we get the closing paranteses
              //we parse expression, since everything is one
              let arg = parseExpression(program); 
+           
             expr.args.push(arg.expr);
             
             //clean the rest of the input
@@ -87,10 +142,17 @@ function parseApply(expr, program) {
 function parse(program) { 
     // a program is also an expression
      let {expr, rest} = parseExpression(program);
-      if (skipSpace(rest).length > 0) { 
-      throw new SyntaxError("Unexpected text after program"); 
-      } 
+      if ( rest != null )
+      {
+       
+          if ( fnd = skipSpace(rest).length > 0) { 
+            
+           throw new SyntaxError("Unexpected text after program: "+fnd); 
+      }
       return expr;
+      }
+      
+      return "" ;
   }
 
 //This object will help us implement 
@@ -102,10 +164,12 @@ const specialForms = Object.create(null);
 //called by the run function
 function evaluate(expr, scope) {
   if (expr.type == "value") {  //check if the expr is a value
+    
     return expr.value;  //if true, return it
     
   } else if (expr.type == "word") {
       //if its an ID , check if it declared
+      
     if (expr.name in scope) {
       return scope[expr.name]; 
     } else { 
@@ -116,6 +180,7 @@ function evaluate(expr, scope) {
   } else if (expr.type == "apply") { //check if it a built-in function
   
     let {operator, args} = expr;
+   
         
     if (operator.type == "word" &&
         operator.name in specialForms) {
@@ -262,7 +327,11 @@ topScope.print = value => {
 //called by cmpl function
 function run(program) {
   if( program.length > 0 )
-  return evaluate(parse(program), Object.create(topScope));
+  {
+   var scope = Object.create(topScope) ;
+   scope["null"]  = null ;
+  return evaluate(parse(program), scope );
+  } 
 }
 
 
@@ -357,20 +426,3 @@ specialForms.function = (args, scope) => {
     return evaluate(body, localScope);
   };
 };
-
-
-function CMD(layq)
-{
-		
-	//Create a scroller for log window.
-    scroll = app.CreateScroller( 1,1 )
-    scroll.SetBackColor( "black" );
-    layq.AddChild( scroll );
-      
-	//Create text control for logging (max 500 lines).
-	txt = app.CreateImage( null, 1,1);
-	txt.SetBackColor( "black" );
-	scroll.AddChild( txt );
-	
-//	if ( y == 0.9 ) scroll.ScrollTo( 0,1 );
-}
