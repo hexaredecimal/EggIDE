@@ -17,7 +17,7 @@
 
 
 ## Example program.
-```
+```JavaScipt
     do(
       var(max, 
            function(n,m,
