@@ -37,9 +37,6 @@
 ## Tutorial 
 >> The tutorial is available for egg lang. If you're interested in learning functional programming, click the link below.
 
-#### [Egg Wiki]( http://psisj "title")
-
-
-
+#### [Egg Wiki]( https://github.com/Vincemcking12/Egg-Lang/wiki )
 
 
