@@ -1,149 +1,45 @@
-!EGG PROGRAMMING LANGUAGE 
+# EGG LANG
+![alt](eggicon.png)
+###### a simple programming solution
 
-egg is a simple but elegant programing language. It is small but yet packs a lot power and capabilities. It follows the functional programming paradigm. 
-Here is a list of features
+### Info
+>> Egg Lang is a general purpose, functional programming language. It can represent virtually any mathematical function. The language is included as part of the Eloquent JavaScript text book. I took the liberty of remaking the language and adding new features such as try catch blocks and arrays.
 
-   * function declaration and calls
-   * function return (expr and func decl)
-   * safe code execution
+### Getting started
+> - clone this GitHub repo, if you intend on using it online or as part of your website
 
-The language is massively small and some might find it slow, that is due to the implementation language and writing non-optimised code.
-I'll try and optimise it some other time.
+> - Download the EggIDE APK from the link below if you intend to use it on your mobile device. download the APK [here](http://example.com "Title").
 
-!tutorial
+### Contributors 
+> * **Sibusiso Vincent Gama** - *initial work*
 
-1. Greetings
+> * Eloquent JavaScript Authors
+
+
+## Example program.
 ```
     do(
-       print("Hello, world!!")
-    )
-```
-    -- Here we use do to involve the evaluator and create a new scope.
-    -- do is a built-in function which takes an unlimited number of arguments
-    -- in Egg all statements return a value
-    -- The evaluator will start executing from this point
-    -- print is a built-in function for writing to the console
-
-2. Variables
-
-```
-    do(
-       var(x,10),
-       print(x)
-    )
-
-```
-   -- var is a built-in function for creating variables
-   -- it takes the first argument as a name and the other as value
-   -- it then returns the name bind to the value 
-   -- print also returns its argument 
- 
-
-```
-   do(
-      var(x print(5)),
-      print(x)
+      var(max, 
+           function(n,m,
+               if(>(n,m),n,m)
+           )
+     ),
+      print(max(300,500))
    )
-```
-	-- we can also declare our own functions
-	-- we use the function function...lol
-	-- it takes a list of parameters 
-	-- and the body as the last parameter
-
 
 ```
-	do(
-		var( max, function(n1,n2 ,
-			 if(>(n1,n2), n1, n2)
-		   )
-		),
-		print(max(20,50))
-	)
+>> The program above computes the maximum number between two numbers. The value gets printed to the screen, as expected it's result will be as follows: 
+```
+500
+======== Compiler Success =======
 ```
 
-	-- as you can see we can also use the if function
-	-- it takes 3 parameters 
-	-- the first is the condition
-	-- the second is the value if true 
-	-- or a list of statements inside a do function
-	-- the third is the value if false 
-	-- or also a list of statemts
-	
-```
-	do(
-		var(n,30),
-		if(>(n,30), 
-			print("True"), 
-			print("False")
-		 )
-	)
+## Tutorial 
+>> The tutorial is available for egg lang. If you're interested in learning functional programming, click the link below.
 
-```
+#### [Egg Wiki]( http://psisj "title")
 
-	-- loops can be created only with the while function
-	-- it takes 2 parameters
-	-- the first one is the condition
-	-- the second one is the body
-	-- it can be a value or a list of statements inside a do function
 
-```
-	do(
-		var(n,20),
-		while (>(n,0),
-			do(
-				print(n),
-				var(n,-(n,1))
-			)
-		)
-	)
-	
-```
 
-	-- we can catch and handle exceptions 
-	-- we use the try function 
-	-- it takes 2 parameters
-	-- the first parameter is the unsafe block
-	-- it can be list of statements 
-	-- the second parameter is the catch block
-	-- it can be a list of statements 
-	-- notice the syntax error below handled at runtime
-```
-	do(
-		try(
-			do(
-				print("Hello"),
-				$
-			),
-			print("Syntax error $$$$")
-		)
-	)
-```
-	-- we can also throw our own exceptions 
-	-- we use the throw function 
-	-- it takes 1 parameter
-	-- the first parameter is the message or the error value
-	-- if not caught it prints the excpetion and exits the program unsuccessfully
-	-- Here is an example
-	
-```
-	do(
-		print("Hello"),
-		throw("Sudden death")
-	)
-```
 
-	--- we can catch and bypass the exception 
-	--- we must use a try function
-	
-```
-	do(
-		try(
-			do(
-				print("Hello"),
-				throw("Sudden death")
-			),
-			print("Got revived")
-		)
 
-	)
-```
